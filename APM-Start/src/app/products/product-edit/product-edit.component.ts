@@ -1,22 +1,42 @@
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router'
 import { MessageService } from '../../messages/message.service';
 
-import { Product } from '../product';
+import { Product, ProductResolved } from '../product';
 import { ProductService } from '../product.service';
 
 @Component({
   templateUrl: './product-edit.component.html',
   styleUrls: ['./product-edit.component.css']
 })
-export class ProductEditComponent {
+export class ProductEditComponent implements OnInit {
   pageTitle = 'Product Edit';
   errorMessage: string;
 
   product: Product;
 
+  ngOnInit() { 
+    this.route.data.subscribe(data => { 
+      const resolvedData: ProductResolved = data['resolvedData'];
+      this.onProductRetrieved(resolvedData.product);
+    })
+
+    // this.route.paramMap.subscribe(
+    //   params=>{
+    //     const id = +params.get('id');
+    //     this.getProduct(id);
+    // })
+    
+    // console.log("Hurryaah");
+    // const id = +this.route.snapshot.paramMap.get('id');
+    // const t = this.route.snapshot.paramMap.keys;
+    // console.log(t);
+    // this.getProduct(id);
+  }
+
   constructor(private productService: ProductService,
-              private messageService: MessageService) { }
+              private messageService: MessageService,
+              private route: ActivatedRoute) { }
 
   getProduct(id: number): void {
     this.productService.getProduct(id).subscribe({
